@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+   <meta charset="UTF-8" />
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="robots" content="none" />
+   <title>Dekatrian</title>
+   <link rel="preconnect" href="https://use.fontawesome.com" />
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png" />
+   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png" />
+   <link rel="manifest" href="assets/icons/site.webmanifest" crossorigin />
+   <link rel="stylesheet"
+         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&family=Titillium+Web:wght@600&display=swap" />
+   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" />
+   <link rel="stylesheet" href="assets/style.min.css" />
+   <script src="assets/script.min.js" defer></script>
+</head>
+<body
+      class="h-full bg-cover font-sans text-lg text-white cursor-default select-none">
+   <div class="flex h-full flex-col">
+      <header
+              class="bg-stone-800/80 py-2 px-3 flex justify-between items-center">
+         <div class="flex gap-5">
+            <h1 class="text-2xl font-bold hidden md:block">
+               <a href="https://www.deviante.com.br/noticias/dekatrian-um-calendario-minimamente-decente/"
+                  target="_blank">Dekatrian</a>
+            </h1>
+            <nav>
+               <ul class="flex gap-2 items-center">
+                  <li>
+                     <button class="py-1 px-3 border rounded bg-zinc-900 cursor-pointer" data-action="goToToday">
+                        <span data-translate="today"></span>
+                     </button>
+                  </li>
+                  <li>
+                     <button class="py-1 px-3 cursor-pointer" data-action="prevMonth">
+                        <i class="fa-solid fa-angle-left"></i>
+                     </button>
+                  </li>
+
+                  <li>
+                     <button class="py-1 px-3 cursor-pointer" data-action="nextMonth">
+                        <i class="fa-solid fa-angle-right"></i>
+                     </button>
+                  </li>
+                  <li class="text-xl">
+                     <span id="currentMonth"></span>
+                     <span class="hidden md:inline" data-translate="of"></span>
+                     <span id="currentYear"></span>
+                  </li>
+               </ul>
+            </nav>
+         </div>
+         <nav>
+            <ul class="flex gap-2 items-center">
+               <li>
+                  <button class="py-1 px-3 cursor-pointer" data-action="openAddEvent">
+                     <i class="fa-solid fa-plus"></i>
+                  </button>
+               </li>
+               <li>
+                  <button class="py-1 px-3 cursor-pointer" data-action="openConfig">
+                     <i class="fa-solid fa-gear"></i>
+                  </button>
+               </li>
+            </ul>
+         </nav>
+      </header>
+      <div id="week" class="mt-1 md:mx-1 grid grid-cols-7"></div>
+      <main
+            id="calendar"
+            class="grow mb-1 md:mx-1 grid grid-cols-7 grid-rows-5"></main>
+   </div>
+
+   <div id="add-event" class="fixed inset-0 flex justify-center items-center bg-gray-900/50 z-10 hidden">
+      <div
+           class="py-5 px-7 max-w-screen-md w-11/12 border rounded bg-zinc-700">
+         <button
+                 class="float-right font-lg cursor-pointer"
+                 data-action="closeAddEvent">
+            <i class="fa-solid fa-xmark"></i>
+         </button>
+         <h2 class="text-2xl font-bold">
+            <p data-translate="addEvent"></p>
+            <p class="italic text-sm font-normal" data-translate="eventDisclaimer"> </p>
+         </h2>
+         <form id="add-date-form" method="post">
+            <section class="mt-3">
+               <label>
+                  <h3 class="text-xl">
+                     <span data-translate="">Nome</span>
+                  </h3>
+                  <input
+                         class="appearance-none mt-1 py-1 px-2 text-black rounded"
+                         type="text"
+                         name="event-name"
+                         required />
+               </label>
+            </section>
+            <section class="mt-3">
+               <header>
+                  <h3 class="text-xl">
+                     <span data-translate="">Calendário</span>
+                  </h3>
+               </header>
+               <label>
+                  <input
+                         type="radio"
+                         name="calendar-base"
+                         value="gregorian"
+                         checked />
+                  <span data-translate="">Gregoriano</span>
+               </label>
+               <label>
+                  <input
+                         type="radio"
+                         name="calendar-base"
+                         value="dekatrian" />
+                  Dekatrian
+               </label>
+            </section>
+            <section class="mt-3">
+               <label>
+                  <h3 class="text-xl">
+                     <span data-translate="">Selecionar frequência</span>
+                  </h3>
+                  <select
+                          class="mt-1 py-1 px-2 text-black rounded"
+                          name="event-repeat"
+                          required>
+                     <option value="anual" selected>Anual</option>
+                     <!-- <option value="bimonthly">A cada 2 meses</option> -->
+                     <option value="monthly">Mensal</option>
+                     <!-- <option value="weekly">Semanal</option> -->
+                  </select>
+                  <span class="ml-1 text-gray-500"></span>
+               </label>
+            </section>
+            <section id="gregorian-calendar" class="calendar-option mt-3">
+               <label>
+                  <h3 class="text-xl">Data</h3>
+                  <select
+                          class="event-input mt-1 py-1 px-2 text-black rounded"
+                          name="gregorian-month"
+                          required></select>
+                  <input
+                         class="event-input appearance-none mt-1 py-1 px-2 text-black rounded"
+                         type="number"
+                         name="gregorian-day"
+                         placeholder="1 - 31"
+                         min="1"
+                         max="31"
+                         required />
+               </label>
+            </section>
+            <section
+                     id="dekatrian-calendar"
+                     class="calendar-option mt-3 hidden">
+               <label>
+                  <h3 class="text-xl">Data</h3>
+                  <select
+                          class="event-input mt-1 py-1 px-2 text-black rounded"
+                          name="dekatrian-month"></select>
+                  <input
+                         class="event-input appearance-none mt-1 py-1 px-2 text-black rounded"
+                         type="number"
+                         name="dekatrian-day"
+                         placeholder="1 - 28"
+                         min="1"
+                         max="28" />
+               </label>
+            </section>
+            <button
+                    class="mt-2 py-1 px-3 border rounded bg-zinc-900 cursor-pointer"
+                    type="submit">
+               <span data-translate="">Salvar</span>
+            </button>
+         </form>
+      </div>
+   </div>
+
+   <div
+        id="config"
+        class="fixed inset-0 flex justify-center items-center bg-gray-900/50 z-10 hidden">
+      <div
+           class="py-5 px-7 max-w-screen-md w-11/12 border rounded bg-zinc-700">
+         <button
+                 class="float-right font-lg cursor-pointer"
+                 data-action="closeConfig">
+            <i class="fa-solid fa-xmark"></i>
+         </button>
+         <h2 class="text-2xl font-bold">
+            <span data-translate="settings"></span>
+         </h2>
+         <section class="mt-3">
+            <header>
+               <h3 class="text-xl">
+                  <span data-translate="firstDayOfTheWeek"></span>
+               </h3>
+            </header>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="firstDayOfWeek"
+                      value="flex" />
+               <span data-translate="flexible"></span>
+            </label>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="firstDayOfWeek"
+                      value="sunday" />
+               <span data-translate="sunday"></span>
+            </label>
+            <!-- <label>
+                  <input
+                     class="config"
+                     type="radio"
+                     name="firstDayOfWeek"
+                     value="monday"
+                  />
+                  <span data-translate="monday"></span>
+               </label> -->
+         </section>
+         <section class="mt-3">
+            <header>
+               <h3 class="text-xl">
+                  <span data-translate="initialYear"></span>
+               </h3>
+            </header>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="firstYear"
+                      value="common" />
+               <span data-translate="commonEra"></span> (e.g. 2020)
+            </label>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="firstYear"
+                      value="human" />
+               <span data-translate="holoceneEra"></span> (e.g. 12020)
+            </label>
+         </section>
+         <section class="mt-3">
+            <header>
+               <h3 class="text-xl">Mostrar datas gregorianas</h3>
+            </header>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="showGregorian"
+                      value="yes" />
+               <span>Sim</span>
+            </label>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="showGregorian"
+                      value="no" />
+               <span>Não</span>
+            </label>
+         </section>
+         <section class="mt-3">
+            <header>
+               <h3 class="text-xl">
+                  <span data-translate="language"></span>
+               </h3>
+            </header>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="language"
+                      value="en" />
+               <span>English</span>
+            </label>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="language"
+                      value="pt" />
+               <span>Português</span>
+            </label>
+            <label>
+               <input
+                      class="config"
+                      type="radio"
+                      name="language"
+                      value="eo" />
+               <span>Esperanto</span>
+            </label>
+         </section>
+
+         <section class="mt-3">
+            <header>
+               <h3 class="text-xl">
+                  <span data-translate="">Importar ou Exportar datas</span>
+               </h3>
+            </header>
+            <div class="mt-2 flex gap-x-2 items-center">
+               <label class="py-1 px-2 border rounded bg-zinc-900">
+                  <input
+                         id="import-ics"
+                         class="hidden"
+                         type="file"
+                         accept="text/calendar" />
+                  <i class="fa-solid fa-calendar-plus mr-1"></i>
+                  <span data-translate="">Importar ICS</span>
+               </label>
+
+               <form id="form-import-json" method="post">
+                  <label class="py-1 px-2 border rounded bg-zinc-900">
+                     <input
+                            id="import-json"
+                            name="json-file"
+                            class="hidden"
+                            type="file"
+                            accept="application/json" />
+                     <i class="fa-solid fa-upload mr-1"></i>
+                     <span data-translate="">Importar JSON</span>
+                  </label>
+               </form>
+
+               <a
+                  id="btn-export-json"
+                  class="appearance-none py-1 px-2 border rounded bg-zinc-900"
+                  download="fjb-dekatrian-events.json">
+                  <i class="fa-solid fa-download mr-1"></i>
+                  <span data-translate="">Exportar JSON</span>
+               </a>
+            </div>
+            <div class="mt-2">
+               <a
+                  class="py-1 px-2 border rounded bg-zinc-900"
+                  href="https://calendar.google.com/calendar/u/0/embed?src=am83kh1fg2gpes64lng77e4o54@group.calendar.google.com&ctz=America/Sao_Paulo"
+                  target="_blank">
+                  <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>
+                  <span data-translate="">
+                     Adicionar Dekatrian à sua agenda
+                  </span>
+               </a>
+            </div>
+         </section>
+      </div>
+   </div>
+</body>
+</html>

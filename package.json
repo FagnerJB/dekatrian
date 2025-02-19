@@ -1,0 +1,23 @@
+{
+   "name": "dekatrian",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "js": "webpack",
+      "js-watch": "webpack --watch",
+      "css": "tailwindcss -i ./src/style.css -o ./assets/style.min.css --minify",
+      "css-watch": "tailwindcss -i ./src/style.css -o ./assets/style.min.css --watch --minify",
+      "assets": "npm run js && npm run css"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "devDependencies": {
+      "postcss": "^8.4.6",
+      "tailwindcss": "^3.0.18",
+      "webpack": "^5.69.1",
+      "webpack-cli": "^4.9.2",
+      "ics-to-json": "^1.0.0"
+   }
+}
