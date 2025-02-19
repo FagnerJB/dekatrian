@@ -15,7 +15,7 @@ module.exports = {
       ],
    },
    output: {
-      filename: './assets/script.min.js',
+      filename: '../assets/script.min.js',
       path: path.resolve(__dirname, 'src'),
    },
 }
